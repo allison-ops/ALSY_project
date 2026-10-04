@@ -7,20 +7,20 @@ import { SITE } from "@/lib/site";
 
 type Phase = "idle" | "shaking" | "rising";
 
-/** 籤等的配色：吉偏紅金、凶偏冷色 */
-const LEVEL_STYLE: Record<LevelKey, { text: string; seal: string; chip: string }> = {
-  daikichi: { text: "text-red-600", seal: "border-red-600 bg-red-50/80", chip: "bg-red-600 text-white" },
-  chukichi: { text: "text-rose-600", seal: "border-rose-500 bg-rose-50/80", chip: "bg-rose-500 text-white" },
-  shokichi: { text: "text-orange-600", seal: "border-orange-500 bg-orange-50/80", chip: "bg-orange-500 text-white" },
-  kichi: { text: "text-amber-700", seal: "border-amber-600 bg-amber-50/80", chip: "bg-amber-600 text-white" },
-  suekichi: { text: "text-lime-700", seal: "border-lime-600 bg-lime-50/80", chip: "bg-lime-600 text-white" },
-  kyo: { text: "text-slate-600", seal: "border-slate-500 bg-slate-100/80", chip: "bg-slate-500 text-white" },
-  daikyo: { text: "text-violet-900", seal: "border-violet-900 bg-violet-50/80", chip: "bg-violet-900 text-white" },
+/** 籤等配色：吉偏暖粉、凶偏冷色 */
+const LEVEL_STYLE: Record<LevelKey, { text: string; ring: string; chip: string }> = {
+  daikichi: { text: "text-rose-600", ring: "#f43f5e", chip: "bg-rose-500 text-white" },
+  chukichi: { text: "text-pink-600", ring: "#ec4899", chip: "bg-pink-500 text-white" },
+  shokichi: { text: "text-fuchsia-600", ring: "#d946ef", chip: "bg-fuchsia-500 text-white" },
+  kichi: { text: "text-sky-600", ring: "#0ea5e9", chip: "bg-sky-500 text-white" },
+  suekichi: { text: "text-teal-600", ring: "#14b8a6", chip: "bg-teal-500 text-white" },
+  kyo: { text: "text-slate-600", ring: "#64748b", chip: "bg-slate-500 text-white" },
+  daikyo: { text: "text-indigo-900", ring: "#312e81", chip: "bg-indigo-900 text-white" },
 };
 
 const SHAKE_MS = 1600;
-const RISE_MS = 700;
-const BROWN = "#4a230c";
+const RISE_MS = 750;
+const NAVY = "#2c3a6b";
 
 export function FortuneApp() {
   const state = useFortunes();
@@ -30,7 +30,7 @@ export function FortuneApp() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   if (!state) {
-    return <div className="flex flex-1 items-center justify-center bg-[#fbf0dc] text-sm text-amber-900/50">載入中…</div>;
+    return <div className="flex flex-1 items-center justify-center bg-sky-50 text-sm text-slate-400">載入中…</div>;
   }
 
   const today = todayStr();
@@ -59,7 +59,7 @@ export function FortuneApp() {
   const copy = async (f: Fortune) => {
     const level = LEVELS[f.level];
     const text = [
-      `【${SITE.name}・好運抽籤】${f.date} 第 ${f.number} 籤：${level.name}`,
+      `【${SITE.name}・好運籤】${f.date} 第 ${f.number} 籤：${level.name}`,
       f.poem.join("，") + "。",
       f.summary,
       ...ASPECTS.map((a, i) => `${a.label} ${"★".repeat(f.aspects[i].stars)}${"☆".repeat(5 - f.aspects[i].stars)}`),
@@ -76,72 +76,56 @@ export function FortuneApp() {
   };
 
   return (
-    <div ref={scrollRef} className="relative min-h-0 flex-1 overflow-y-auto bg-[#fbf0dc]">
-      <BackgroundClouds />
-
+    <div ref={scrollRef} className="relative min-h-0 flex-1 overflow-y-auto bg-linear-to-b from-sky-100 via-white to-pink-100">
       <div className="relative mx-auto max-w-2xl px-4 py-6 sm:px-6">
-        {/* 主視覺：仿廟宇插畫海報 */}
-        <section className="relative overflow-hidden rounded-[28px] border-2 border-[#d9a85b] bg-[#fdf5e6] px-4 pt-6 shadow-[0_10px_30px_rgb(146_64_14/0.12)]">
-          <CornerOrnaments />
-          <p className="text-center text-sm font-medium tracking-widest text-[#7c4a21]">— {SITE.name}的廟宇求籤時間 —</p>
-          <TempleTitle />
-          <div className="mt-1 flex justify-center">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#9b1c1c] px-4 py-1 text-sm font-bold tracking-wider text-[#fff4dc] shadow-sm">
-              {todays ? `今日第 ${todays.drawIndex ?? 1} 籤` : "誠心默念 求好籤"}
-              <span aria-hidden>➤</span>
-            </span>
+        {/* 主視覺：雲上的六角籤筒 */}
+        <section className="relative overflow-hidden rounded-[32px] bg-linear-to-b from-[#bfe3ff] via-[#e6f1ff] to-[#ffdcec] px-4 pb-4 pt-7 shadow-[0_12px_40px_rgb(125_160_220/0.25)] ring-1 ring-white">
+          <div className="relative z-10 text-center">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.5em] text-[#2c3a6b]/50">Fortune of the day</p>
+            <h1 className="font-serif-tc mt-1 text-4xl font-black tracking-[0.3em] text-[#2c3a6b] sm:text-5xl">好運籤</h1>
+            <p className="mt-2 text-sm text-[#2c3a6b]/70">
+              {todays ? `今天已求得 ${todays.drawIndex ?? 1} 支籤` : "把心願輕輕說給雲聽，再搖一搖籤筒"}
+            </p>
           </div>
 
-          <div className="relative mx-auto mt-2 h-[300px] max-w-[520px] sm:h-[330px]">
-            <Mountains />
-            <Temple />
-            {/* 籤筒（可點擊抽籤） */}
-            <button
-              type="button"
-              onClick={shake}
-              disabled={busy}
-              aria-label="搖動籤筒抽籤"
-              className="absolute bottom-[96px] left-[2%] w-[27%] max-w-[130px] outline-none transition hover:-translate-y-1 focus-visible:drop-shadow-[0_0_8px_rgb(234_88_12/0.8)] sm:left-[4%]"
-            >
-              <FortuneCylinder phase={phase} />
-            </button>
-            <HandNote className="bottom-[60px] left-0 -rotate-6 sm:left-[2%]">搖一搖・抽籤</HandNote>
-            {/* 筊杯（裝飾） */}
-            <div className="absolute right-[2%] top-[34px] w-[24%] max-w-[110px] sm:right-[4%]">
-              <MoonBlocks shaking={phase === "shaking"} />
-            </div>
-            <HandNote className="right-0 top-[118px] rotate-6 sm:right-[2%]">誠心祈求？</HandNote>
-          </div>
+          <button
+            type="button"
+            onClick={shake}
+            disabled={busy}
+            aria-label="搖動六角籤筒抽籤"
+            className="relative mx-auto -mt-4 block w-full max-w-[460px] outline-none focus-visible:drop-shadow-[0_0_10px_rgb(236_72_153/0.6)]"
+          >
+            <SkyScene phase={phase} />
+          </button>
         </section>
 
-        {/* 抽籤按鈕 / 狀態 */}
         {(!todays || busy) && (
           <div className="mt-6 flex flex-col items-center">
             <PrimaryButton onClick={shake} disabled={busy}>
               {phase === "idle" ? "搖籤" : phase === "shaking" ? "搖籤中…" : "籤出來了！"}
             </PrimaryButton>
-            <p className="mt-2 text-xs text-[#7c4a21]/70">靜下心來，默念想問的事，再搖動籤筒</p>
+            <p className="mt-2 text-xs text-slate-500">點籤筒或按鈕都可以抽籤</p>
           </div>
         )}
 
         {shown && !busy && (
           <div className="mt-6">
             {viewDate && viewDate !== today && (
-              <div className="mb-3 flex items-center justify-between rounded-xl border border-[#e7c48d] bg-[#fff8ea] px-3 py-2 text-sm text-[#7c4a21]">
+              <div className="glass-panel mb-3 flex items-center justify-between rounded-xl px-3 py-2 text-sm text-slate-600">
                 <span>正在查看 {shortDate(viewDate, today)}（{weekdayLabel(viewDate)}）的籤</span>
-                <button type="button" onClick={() => setViewDate(null)} className="font-medium text-[#9b1c1c] hover:underline">
+                <button type="button" onClick={() => setViewDate(null)} className="font-medium text-pink-500 hover:underline">
                   {todays ? "回到今天" : "返回"}
                 </button>
               </div>
             )}
-            <FortuneCard key={`${shown.date}-${shown.drawnAt}`} fortune={shown} />
+            <FortuneSlip key={`${shown.date}-${shown.drawnAt}`} fortune={shown} />
 
             <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
               <PrimaryButton onClick={shake}>再抽一次</PrimaryButton>
               <button
                 type="button"
                 onClick={() => void copy(shown)}
-                className="rounded-full border-2 border-[#d9a85b] bg-[#fff8ea] px-5 py-2.5 text-sm font-bold text-[#7c4a21] transition hover:bg-white"
+                className="glass-panel rounded-full px-5 py-2.5 text-sm font-bold text-slate-600 transition hover:bg-white"
               >
                 {copied ? "已複製 ✓" : "複製籤文分享"}
               </button>
@@ -151,21 +135,21 @@ export function FortuneApp() {
 
         {past.length > 0 && !busy && (
           <section className="mt-9">
-            <h2 className="mb-3 text-center text-sm font-bold tracking-widest text-[#7c4a21]">— 最近的籤 —</h2>
+            <h2 className="mb-3 text-center text-sm font-bold tracking-widest text-slate-500">最近的籤</h2>
             <div className="flex flex-wrap justify-center gap-2">
               {past.slice(0, 14).map((f) => (
                 <button
                   key={f.date}
                   type="button"
                   onClick={() => setViewDate(f.date)}
-                  className={`flex items-center gap-2 rounded-full border-2 bg-[#fff8ea] py-1 pl-1 pr-3 text-xs transition hover:bg-white ${
-                    viewDate === f.date ? "border-[#b45309]" : "border-[#ecd2a6]"
+                  className={`glass-panel flex items-center gap-2 rounded-full py-1 pl-1 pr-3 text-xs transition hover:bg-white ${
+                    viewDate === f.date ? "ring-2 ring-pink-300" : ""
                   }`}
                 >
-                  <span className={`rounded-full px-2 py-0.5 font-serif-tc font-bold ${LEVEL_STYLE[f.level].chip}`}>
+                  <span className={`font-serif-tc rounded-full px-2 py-0.5 font-bold ${LEVEL_STYLE[f.level].chip}`}>
                     {LEVELS[f.level].name}
                   </span>
-                  <span className="text-[#7c4a21]">
+                  <span className="text-slate-600">
                     {shortDate(f.date, today)}（{weekdayLabel(f.date).slice(1)}）
                   </span>
                 </button>
@@ -174,221 +158,164 @@ export function FortuneApp() {
           </section>
         )}
 
-        <p className="mt-10 text-center text-xs text-[#7c4a21]/50">籤詩僅供娛樂參考，好運掌握在自己手裡 ✿</p>
+        <p className="mt-10 text-center text-xs text-slate-400">籤詩僅供娛樂參考，好運掌握在自己手裡 ✦</p>
       </div>
     </div>
   );
 }
 
-// ---- 插畫元件 ----
+// ---- 插畫：雲上的六角籤筒 ----
 
-/** 橘紅漸層字＋深咖啡外框的標題，用 SVG 才能讓外框畫在填色後面 */
-function TempleTitle() {
-  return (
-    <>
-      <h1 className="sr-only">好運抽籤</h1>
-      <svg viewBox="0 0 360 92" className="mx-auto mt-1 h-20 w-full max-w-[380px] sm:h-24" aria-hidden>
-        <defs>
-          <linearGradient id="title-fill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#fb923c" />
-            <stop offset="55%" stopColor="#f97316" />
-            <stop offset="100%" stopColor="#dc2626" />
-          </linearGradient>
-        </defs>
-        <text
-          x="180"
-          y="70"
-          textAnchor="middle"
-          fontSize="66"
-          fontWeight="900"
-          letterSpacing="6"
-          className="font-serif-tc"
-          fill="url(#title-fill)"
-          stroke={BROWN}
-          strokeWidth="9"
-          strokeLinejoin="round"
-          paintOrder="stroke"
-        >
-          『好運抽籤』
-        </text>
-      </svg>
-    </>
-  );
+/** 繩子是 M0 30 Q200 90 400 30 的二次曲線，x 從 0 到 400 時的 y 值 */
+function ropeY(x: number): number {
+  const t = x / 400;
+  return 30 + 120 * t * (1 - t);
 }
 
-function FortuneCylinder({ phase }: { phase: Phase }) {
-  const sticks = [
-    { x: 30, h: 70, r: -8 },
-    { x: 42, h: 84, r: -3 },
-    { x: 54, h: 76, r: 2 },
-    { x: 66, h: 88, r: 6 },
-    { x: 78, h: 70, r: 10 },
-  ];
+const SLIPS = [
+  { x: 36, c: "#ffffff", r: -6 },
+  { x: 86, c: "#ffe4f0", r: 4 },
+  { x: 138, c: "#e0f2ff", r: -3 },
+  { x: 262, c: "#ffffff", r: 5 },
+  { x: 314, c: "#ffe4f0", r: -4 },
+  { x: 364, c: "#e0f2ff", r: 3 },
+];
+
+const LANTERNS = [
+  { x: 56, y: 156, s: 1, d: "0s" },
+  { x: 348, y: 134, s: 0.85, d: "-2s" },
+  { x: 322, y: 214, s: 0.62, d: "-3.5s" },
+];
+
+const SPARKLES = [
+  [112, 104, 6],
+  [292, 92, 5],
+  [128, 218, 4],
+  [270, 236, 5],
+  [32, 236, 4],
+  [374, 262, 4],
+];
+
+function SkyScene({ phase }: { phase: Phase }) {
   return (
-    <svg viewBox="0 0 120 170" className={`w-full drop-shadow-lg ${phase === "shaking" ? "fortune-shake" : ""}`}>
+    <svg viewBox="0 0 400 320" className="w-full" aria-hidden>
       <defs>
-        <linearGradient id="cyl-body" x1="0" x2="1">
-          <stop offset="0%" stopColor="#c2410c" />
-          <stop offset="40%" stopColor="#f97316" />
-          <stop offset="70%" stopColor="#fb923c" />
-          <stop offset="100%" stopColor="#c2410c" />
+        <radialGradient id="sun-halo">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
+          <stop offset="60%" stopColor="#fff4fa" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+        </radialGradient>
+        <linearGradient id="box-front" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3b4c8a" />
+          <stop offset="100%" stopColor={NAVY} />
         </linearGradient>
+        <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#fde68a" />
+          <stop offset="100%" stopColor="#f5b84a" />
+        </linearGradient>
+        <radialGradient id="lantern-glow">
+          <stop offset="0%" stopColor="#ffd9a8" stopOpacity="0.9" />
+          <stop offset="100%" stopColor="#ffd9a8" stopOpacity="0" />
+        </radialGradient>
+        {/* 籤枝只在籤筒孔的上方顯示，看起來像從孔裡滑出來 */}
+        <clipPath id="above-hole">
+          <rect x="0" y="0" width="400" height="125" />
+        </clipPath>
       </defs>
-      {sticks.map((s) => (
-        <g key={s.x} transform={`rotate(${s.r} ${s.x + 4} 80)`}>
-          <rect x={s.x} y={80 - s.h} width="8" height={s.h + 10} rx="3" fill="#fcd34d" stroke={BROWN} strokeWidth="2" />
-          <rect x={s.x} y={80 - s.h} width="8" height="14" rx="3" fill="#dc2626" stroke={BROWN} strokeWidth="2" />
+
+      {/* 光暈 */}
+      <circle cx="200" cy="180" r="120" fill="url(#sun-halo)" />
+      <circle cx="200" cy="180" r="88" fill="none" stroke="#ffffff" strokeOpacity="0.8" strokeWidth="1.5" strokeDasharray="2 6" />
+
+      {/* 綁籤的繩子與籤紙 */}
+      <path d="M0 30 Q 200 90 400 30" fill="none" stroke="#d9a37a" strokeWidth="2.5" />
+      {SLIPS.map((s) => {
+        const y = ropeY(s.x);
+        return (
+          <g key={s.x} transform={`rotate(${s.r} ${s.x} ${y})`}>
+            <rect x={s.x - 5} y={y} width="10" height="30" rx="1.5" fill={s.c} stroke="#cbd5e1" strokeWidth="0.8" />
+            <circle cx={s.x} cy={y + 1} r="3" fill="#f9a8d4" />
+            <line x1={s.x - 2.5} y1={y + 11} x2={s.x + 2.5} y2={y + 11} stroke="#cbd5e1" strokeWidth="1" />
+            <line x1={s.x - 2.5} y1={y + 17} x2={s.x + 2.5} y2={y + 17} stroke="#cbd5e1" strokeWidth="1" />
+          </g>
+        );
+      })}
+
+      {/* 天燈 */}
+      {LANTERNS.map((l) => (
+        <g key={l.x} className="lantern-float" style={{ animationDelay: l.d }}>
+          <g transform={`translate(${l.x} ${l.y}) scale(${l.s})`}>
+            <circle cx="0" cy="4" r="30" fill="url(#lantern-glow)" />
+            <path d="M-11 -14 L11 -14 L14 16 Q 0 20 -14 16 Z" fill="#ffe2b8" stroke="#f0a35e" strokeWidth="1.5" />
+            <path d="M-4 -14 L-5 16 M4 -14 L5 16" stroke="#f0a35e" strokeWidth="1" opacity="0.6" />
+            <ellipse cx="0" cy="17" rx="5" ry="2" fill="#ff9f43" opacity="0.8" />
+          </g>
         </g>
       ))}
-      {/* 被抽中的那一支 */}
-      <g className={phase === "rising" ? "stick-rise" : ""} style={{ opacity: phase === "rising" ? 1 : 0 }}>
-        <rect x="54" y="8" width="11" height="84" rx="3" fill="#fde68a" stroke={BROWN} strokeWidth="2" />
-        <rect x="54" y="8" width="11" height="18" rx="3" fill="#dc2626" stroke={BROWN} strokeWidth="2" />
-      </g>
-      <path d="M18 74 L102 74 L96 162 L24 162 Z" fill="url(#cyl-body)" stroke={BROWN} strokeWidth="3" strokeLinejoin="round" />
-      <path d="M18 74 L102 74 L100 88 L20 88 Z" fill="#ea580c" stroke={BROWN} strokeWidth="3" strokeLinejoin="round" />
-      <circle cx="60" cy="122" r="17" fill="#fef3c7" stroke={BROWN} strokeWidth="3" />
-      <text x="60" y="131" textAnchor="middle" fontSize="22" fontWeight="900" fill="#b91c1c" className="font-serif-tc">
-        籤
-      </text>
-    </svg>
-  );
-}
 
-function MoonBlocks({ shaking }: { shaking: boolean }) {
-  // 一對筊杯：紅色半月形
-  const block = "M8 40 C 8 14, 34 2, 58 8 C 44 14, 32 28, 34 52 C 22 54, 8 50, 8 40 Z";
-  return (
-    <svg viewBox="0 0 110 90" className={`w-full drop-shadow-md ${shaking ? "fortune-shake" : ""}`}>
-      <g transform="rotate(-18 34 32)">
-        <path d={block} fill="#ef4444" stroke={BROWN} strokeWidth="3" strokeLinejoin="round" />
-        <path d="M18 34 C 20 22, 32 14, 44 12" fill="none" stroke="#fca5a5" strokeWidth="4" strokeLinecap="round" />
-      </g>
-      <g transform="translate(46 26) rotate(28 34 32)">
-        <path d={block} fill="#dc2626" stroke={BROWN} strokeWidth="3" strokeLinejoin="round" />
-        <path d="M18 34 C 20 22, 32 14, 44 12" fill="none" stroke="#f87171" strokeWidth="4" strokeLinecap="round" />
-      </g>
-    </svg>
-  );
-}
-
-function Temple() {
-  const tiles = Array.from({ length: 22 }, (_, i) => 52 + i * 14);
-  const upperTiles = Array.from({ length: 12 }, (_, i) => 128 + i * 13);
-  return (
-    <svg viewBox="0 0 400 260" className="absolute inset-x-0 bottom-0 mx-auto w-[92%]" aria-hidden>
-      <g stroke={BROWN} strokeWidth="3" strokeLinejoin="round">
-        {/* 屋脊裝飾 */}
-        <circle cx="200" cy="22" r="7" fill="#fbbf24" />
-        <path d="M120 40 Q 110 26 96 30 M280 40 Q 290 26 304 30" fill="none" strokeLinecap="round" />
-        {/* 上層屋頂 */}
-        <path d="M100 32 L300 32 L300 40 L100 40 Z" fill="#b45309" />
-        <path d="M96 40 L304 40 Q 300 64 330 70 L70 70 Q 100 64 96 40 Z" fill="#f59e0b" />
-        {upperTiles.map((x) => (
-          <line key={x} x1={x} y1="44" x2={x - 2} y2="66" stroke="#c2410c" strokeWidth="2" />
-        ))}
-        {/* 斗拱層 */}
-        <rect x="112" y="70" width="176" height="30" fill="#7c2d12" />
-        {[132, 160, 188, 216, 244].map((x) => (
-          <rect key={x} x={x} y="78" width="22" height="14" fill="#fcd34d" strokeWidth="2" />
-        ))}
-        {/* 下層屋頂 */}
-        <path d="M60 100 L340 100 L340 108 L60 108 Z" fill="#b45309" />
-        <path d="M56 108 L344 108 Q 340 132 384 140 L16 140 Q 60 132 56 108 Z" fill="#f59e0b" />
-        {tiles.map((x) => (
-          <line key={x} x1={x} y1="112" x2={x - 3} y2="136" stroke="#c2410c" strokeWidth="2" />
-        ))}
-        {/* 屋簷下的紅色橫樑 */}
-        <rect x="48" y="140" width="304" height="14" fill="#dc2626" />
-        {/* 牆身 */}
-        <rect x="58" y="154" width="284" height="92" fill="#ea580c" />
-        {/* 左右窗花 */}
-        {[78, 262].map((x) => (
-          <g key={x}>
-            <rect x={x} y="168" width="60" height="64" fill="#b91c1c" />
-            <rect x={x + 8} y="176" width="44" height="48" fill="none" stroke="#fcd34d" strokeWidth="3" />
-            <path d={`M${x + 30} 184 L${x + 42} 200 L${x + 30} 216 L${x + 18} 200 Z`} fill="#fcd34d" strokeWidth="2" />
-          </g>
-        ))}
-        {/* 正門 */}
-        <rect x="162" y="164" width="76" height="82" fill="#7c2d12" />
-        <rect x="168" y="170" width="30" height="76" fill="#b91c1c" strokeWidth="2" />
-        <rect x="202" y="170" width="30" height="76" fill="#b91c1c" strokeWidth="2" />
-        {[184, 200, 216, 232].map((y) => (
-          <g key={y} stroke="none" fill="#fcd34d">
-            <circle cx="176" cy={y} r="2.5" />
-            <circle cx="190" cy={y} r="2.5" />
-            <circle cx="210" cy={y} r="2.5" />
-            <circle cx="224" cy={y} r="2.5" />
-          </g>
-        ))}
-        <rect x="178" y="148" width="44" height="18" rx="2" fill="#fcd34d" />
-        {/* 台基 */}
-        <rect x="36" y="246" width="328" height="12" fill="#a16207" />
-      </g>
-      <text x="200" y="161" textAnchor="middle" fontSize="12" fontWeight="900" fill="#9b1c1c" className="font-serif-tc">
-        好運宮
-      </text>
-    </svg>
-  );
-}
-
-function Mountains() {
-  return (
-    <svg viewBox="0 0 400 200" className="absolute inset-x-0 bottom-6 w-full opacity-70" aria-hidden>
-      <path d="M0 200 L70 110 L120 150 L200 60 L270 140 L320 100 L400 190 L400 200 Z" fill="#f3dcb5" />
-      <path d="M0 200 L90 150 L150 175 L240 120 L330 170 L400 150 L400 200 Z" fill="#ecd0a2" />
-    </svg>
-  );
-}
-
-function BackgroundClouds() {
-  const cloud = (
-    <svg viewBox="0 0 120 50" className="w-full">
-      <path
-        d="M10 40 Q 4 26 18 22 Q 20 8 38 12 Q 48 0 64 10 Q 82 4 88 20 Q 108 18 110 34 Q 112 44 100 44 L 16 44 Q 10 44 10 40 Z"
-        fill="#f6e1bf"
-      />
-      <path d="M30 34 Q 40 24 52 32 M66 30 Q 76 20 86 30" fill="none" stroke="#efcf9c" strokeWidth="3" strokeLinecap="round" />
-    </svg>
-  );
-  return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-      <div className="absolute left-[4%] top-[6%] w-32 opacity-80">{cloud}</div>
-      <div className="absolute right-[6%] top-[18%] w-44 opacity-70">{cloud}</div>
-      <div className="absolute left-[10%] top-[52%] w-28 opacity-60">{cloud}</div>
-      <div className="absolute bottom-[8%] right-[10%] w-36 opacity-60">{cloud}</div>
-    </div>
-  );
-}
-
-function CornerOrnaments() {
-  const corner = "M2 26 L2 8 Q 2 2 8 2 L26 2";
-  const pos = [
-    "left-2 top-2",
-    "right-2 top-2 rotate-90",
-    "right-2 bottom-2 rotate-180",
-    "left-2 bottom-2 -rotate-90",
-  ];
-  return (
-    <>
-      {pos.map((p) => (
-        <svg key={p} viewBox="0 0 28 28" className={`pointer-events-none absolute h-7 w-7 ${p}`} aria-hidden>
-          <path d={corner} fill="none" stroke="#d9a85b" strokeWidth="3" strokeLinecap="round" />
-          <circle cx="9" cy="9" r="2.5" fill="#d9a85b" />
-        </svg>
+      {/* 四角星光 */}
+      {SPARKLES.map(([x, y, r]) => (
+        <path
+          key={`${x}-${y}`}
+          d={`M${x} ${y - r} Q ${x} ${y} ${x + r} ${y} Q ${x} ${y} ${x} ${y + r} Q ${x} ${y} ${x - r} ${y} Q ${x} ${y} ${x} ${y - r} Z`}
+          fill="#ffffff"
+          stroke="#fbcfe8"
+          strokeWidth="0.8"
+        />
       ))}
-    </>
-  );
-}
 
-function HandNote({ className, children }: { className: string; children: string }) {
-  return (
-    <span
-      className={`pointer-events-none absolute whitespace-nowrap rounded-md bg-[#fdf5e6]/80 px-1.5 text-xs font-bold tracking-wider text-[#4a230c] sm:text-sm ${className}`}
-    >
-      {children}
-    </span>
+      {/* 雲朵底座 */}
+      <g fill="#ffffff">
+        <ellipse cx="200" cy="288" rx="150" ry="22" opacity="0.9" />
+        <circle cx="120" cy="274" r="30" />
+        <circle cx="165" cy="262" r="38" />
+        <circle cx="228" cy="260" r="40" />
+        <circle cx="282" cy="274" r="30" />
+      </g>
+      <ellipse cx="200" cy="296" rx="160" ry="14" fill="#fbcfe8" opacity="0.35" />
+
+      {/* 六角籤筒（搖動時整個晃動） */}
+      <g className={phase === "shaking" ? "fortune-shake" : ""} style={{ transformBox: "fill-box", transformOrigin: "50% 100%" }}>
+        {/* 籤枝 */}
+        <g clipPath="url(#above-hole)">
+          <g
+            className={phase === "rising" ? "stick-out" : ""}
+            style={phase === "rising" ? undefined : { transform: "translateY(70px)" }}
+          >
+            <rect x="195" y="54" width="10" height="74" rx="2" fill="#fff7e6" stroke="#d6b88a" strokeWidth="1.2" />
+            <rect x="195" y="54" width="10" height="14" rx="2" fill="#f472b6" />
+          </g>
+        </g>
+
+        {/* 頂面與籤孔 */}
+        <polygon points="150,128 175,116 225,116 250,128 225,140 175,140" fill="#5468ad" stroke={NAVY} strokeWidth="2" strokeLinejoin="round" />
+        <ellipse cx="200" cy="127" rx="8" ry="3.5" fill="#1b2447" />
+
+        {/* 側面與正面 */}
+        <polygon points="150,128 175,140 175,248 150,236" fill="#26335f" stroke={NAVY} strokeWidth="2" strokeLinejoin="round" />
+        <polygon points="225,140 250,128 250,236 225,248" fill="#34468a" stroke={NAVY} strokeWidth="2" strokeLinejoin="round" />
+        <polygon points="175,140 225,140 225,248 175,248" fill="url(#box-front)" stroke={NAVY} strokeWidth="2" strokeLinejoin="round" />
+
+        {/* 金色飾帶 */}
+        <g stroke="url(#gold)" strokeWidth="3.5" fill="none" strokeLinejoin="round">
+          <polyline points="150,142 175,154 225,154 250,142" />
+          <polyline points="150,224 175,236 225,236 250,224" />
+        </g>
+
+        {/* 正面的星形徽章與點點金光 */}
+        <circle cx="200" cy="195" r="19" fill={NAVY} stroke="url(#gold)" strokeWidth="3" />
+        <path d="M200 181 L203.5 191.5 L214 195 L203.5 198.5 L200 209 L196.5 198.5 L186 195 L196.5 191.5 Z" fill="url(#gold)" />
+        <circle cx="160" cy="188" r="2" fill="#fde68a" opacity="0.8" />
+        <circle cx="240" cy="184" r="2" fill="#fde68a" opacity="0.8" />
+        <circle cx="163" cy="206" r="1.4" fill="#fde68a" opacity="0.6" />
+        <circle cx="238" cy="208" r="1.4" fill="#fde68a" opacity="0.6" />
+
+        {/* 粉紅流蘇 */}
+        <path d="M250 152 Q 262 160 258 178" fill="none" stroke="#f472b6" strokeWidth="2.5" strokeLinecap="round" />
+        <circle cx="258" cy="180" r="4" fill="#f472b6" />
+        <path d="M255 183 L253 202 M258 184 L258 204 M261 183 L263 202" stroke="#f9a8d4" strokeWidth="2" strokeLinecap="round" />
+      </g>
+    </svg>
   );
 }
 
@@ -398,7 +325,7 @@ function PrimaryButton({ onClick, disabled, children }: { onClick: () => void; d
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="rounded-full border-[3px] border-[#4a230c] bg-linear-to-b from-[#fb923c] to-[#dc2626] px-9 py-2.5 text-lg font-black tracking-[0.25em] text-[#fff8ea] shadow-[0_4px_0_#4a230c] transition hover:brightness-105 active:translate-y-[3px] active:shadow-[0_1px_0_#4a230c] disabled:opacity-70"
+      className="rounded-full bg-linear-to-r from-sky-400 to-pink-400 px-9 py-2.5 text-lg font-bold tracking-[0.25em] text-white shadow-lg shadow-pink-200/80 ring-1 ring-white/70 transition hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0 disabled:opacity-70"
     >
       {children}
     </button>
@@ -410,57 +337,76 @@ function PrimaryButton({ onClick, disabled, children }: { onClick: () => void; d
 function Stars({ value, className = "" }: { value: number; className?: string }) {
   return (
     <span className={`tracking-tight ${className}`} aria-label={`${value} 顆星`}>
-      <span className="text-amber-500">{"★".repeat(value)}</span>
-      <span className="text-amber-200">{"★".repeat(5 - value)}</span>
+      <span className="text-amber-400">{"★".repeat(value)}</span>
+      <span className="text-slate-200">{"★".repeat(5 - value)}</span>
     </span>
   );
 }
 
-function FortuneCard({ fortune: f }: { fortune: Fortune }) {
-  const level = LEVELS[f.level];
-  const style = LEVEL_STYLE[f.level];
+/** 籤等徽章：放射光芒環繞的圓形 */
+function LevelBadge({ level }: { level: LevelKey }) {
+  const style = LEVEL_STYLE[level];
+  const rays = Array.from({ length: 16 }, (_, i) => i * 22.5);
   return (
-    <article className="fortune-reveal relative rounded-[24px] border-[3px] border-[#4a230c] bg-[#fffaf0] p-2 shadow-[0_6px_0_#d9a85b]">
-      <div className="relative rounded-[18px] border-2 border-dashed border-[#d9a85b] px-5 pb-6 pt-8 sm:px-8">
-        <CornerOrnaments />
-        {/* 標頭 */}
-        <div className="flex flex-col items-center">
-          <span className="rounded-full bg-[#9b1c1c] px-4 py-0.5 text-sm font-bold tracking-[0.3em] text-[#fff4dc]">
-            第 {f.number} 籤
-          </span>
-          <div className={`seal-stamp mt-4 flex h-28 w-28 items-center justify-center rounded-2xl border-[5px] ${style.seal}`}>
-            <span className={`font-serif-tc text-5xl font-black ${style.text}`}>{level.name}</span>
-          </div>
-          <div className="mt-4 flex items-center gap-2 text-sm font-medium text-[#7c4a21]">
-            整體運勢 <Stars value={level.stars} className="text-lg" />
-          </div>
-        </div>
+    <div className="fortune-reveal relative flex h-36 w-36 items-center justify-center">
+      <svg viewBox="0 0 140 140" className="absolute inset-0 h-full w-full" aria-hidden>
+        {rays.map((deg) => (
+          <rect key={deg} x="68.5" y="4" width="3" height="16" rx="1.5" fill={style.ring} opacity="0.35" transform={`rotate(${deg} 70 70)`} />
+        ))}
+        <circle cx="70" cy="70" r="46" fill="#ffffff" stroke={style.ring} strokeWidth="3" />
+        <circle cx="70" cy="70" r="40" fill="none" stroke={style.ring} strokeWidth="1" strokeDasharray="3 4" opacity="0.6" />
+      </svg>
+      <span className={`font-serif-tc relative text-4xl font-black ${style.text}`}>{LEVELS[level].name}</span>
+    </div>
+  );
+}
 
-        {/* 籤詩 */}
-        <div className="my-6 rounded-2xl bg-[#fdf0d8] px-4 py-5 text-center ring-2 ring-[#ecd2a6]">
-          <div className="font-serif-tc grid gap-1.5 text-lg font-bold tracking-[0.2em] text-[#7c2d12] sm:grid-cols-2 sm:gap-x-6">
-            {f.poem.map((line) => (
-              <p key={line}>{line}</p>
-            ))}
+function FortuneSlip({ fortune: f }: { fortune: Fortune }) {
+  const level = LEVELS[f.level];
+  return (
+    <article className="fortune-reveal glass-panel relative overflow-hidden rounded-[28px]">
+      {/* 籤紙頂端的封條 */}
+      <div className="flex items-center justify-center gap-3 bg-[#2c3a6b] py-2.5 text-[#fde68a]">
+        <span className="h-px w-8 bg-[#fde68a]/50" />
+        <span className="font-serif-tc text-sm font-bold tracking-[0.4em]">第 {f.number} 籤</span>
+        <span className="h-px w-8 bg-[#fde68a]/50" />
+      </div>
+
+      <div className="px-5 pb-7 pt-5 sm:px-8">
+        <div className="grid items-center gap-4 sm:grid-cols-[auto_1fr]">
+          <div className="flex flex-col items-center">
+            <LevelBadge level={f.level} />
+            <div className="mt-1 flex items-center gap-2 text-sm text-slate-500">
+              整體 <Stars value={level.stars} className="text-base" />
+            </div>
+          </div>
+
+          {/* 直式籤詩，由右至左閱讀 */}
+          <div className="flex justify-center">
+            <div className="font-serif-tc flex flex-row-reverse gap-3 rounded-2xl bg-white/70 px-5 py-4 ring-1 ring-pink-100">
+              {f.poem.map((line) => (
+                <p key={line} className="text-lg font-bold leading-[1.35] tracking-[0.25em] text-[#2c3a6b] [writing-mode:vertical-rl]">
+                  {line}
+                </p>
+              ))}
+            </div>
           </div>
         </div>
 
         <Section title="解籤">
-          <p className="leading-relaxed text-stone-700">{f.summary}</p>
+          <p className="leading-relaxed text-slate-700">{f.summary}</p>
         </Section>
 
         <Section title="各項運勢">
-          <ul className="space-y-2.5">
+          <ul className="grid gap-2.5 sm:grid-cols-2">
             {f.aspects.map((a, i) => (
-              <li key={a.key} className="flex gap-3">
-                <span className="w-6 text-center text-lg leading-6">{ASPECTS[i].icon}</span>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-[#4a230c]">{ASPECTS[i].label}</span>
-                    <Stars value={a.stars} className="text-sm" />
-                  </div>
-                  <p className="mt-0.5 text-sm leading-relaxed text-stone-600">{a.text}</p>
+              <li key={a.key} className="rounded-xl bg-white/60 px-3 py-2.5 ring-1 ring-sky-100">
+                <div className="flex items-center gap-2">
+                  <span className="text-base">{ASPECTS[i].icon}</span>
+                  <span className="text-sm font-bold text-slate-800">{ASPECTS[i].label}</span>
+                  <Stars value={a.stars} className="ml-auto text-sm" />
                 </div>
+                <p className="mt-1 text-sm leading-relaxed text-slate-600">{a.text}</p>
               </li>
             ))}
           </ul>
@@ -481,26 +427,22 @@ function FortuneCard({ fortune: f }: { fortune: Fortune }) {
         </Section>
 
         <Section title="今日宜忌">
-          <div className="space-y-2 text-sm">
-            <div className="flex items-start gap-2">
-              <span className="font-serif-tc flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#dc2626] text-xs font-bold text-white ring-2 ring-[#4a230c]">
-                宜
-              </span>
+          <div className="grid gap-2 text-sm sm:grid-cols-2">
+            <div className="rounded-xl bg-pink-50/80 px-3 py-2.5 ring-1 ring-pink-100">
+              <div className="font-serif-tc mb-1.5 font-bold text-pink-600">宜</div>
               <div className="flex flex-wrap gap-1.5">
                 {f.good.map((g) => (
-                  <span key={g} className="rounded-full bg-red-50 px-2.5 py-0.5 text-red-700 ring-1 ring-red-200">
+                  <span key={g} className="rounded-full bg-white px-2.5 py-0.5 text-pink-700 ring-1 ring-pink-200">
                     {g}
                   </span>
                 ))}
               </div>
             </div>
-            <div className="flex items-start gap-2">
-              <span className="font-serif-tc flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#4a230c] text-xs font-bold text-white">
-                忌
-              </span>
+            <div className="rounded-xl bg-sky-50/80 px-3 py-2.5 ring-1 ring-sky-100">
+              <div className="font-serif-tc mb-1.5 font-bold text-sky-700">忌</div>
               <div className="flex flex-wrap gap-1.5">
                 {f.bad.map((b) => (
-                  <span key={b} className="rounded-full bg-stone-100 px-2.5 py-0.5 text-stone-600 ring-1 ring-stone-200">
+                  <span key={b} className="rounded-full bg-white px-2.5 py-0.5 text-sky-800 ring-1 ring-sky-200">
                     {b}
                   </span>
                 ))}
@@ -510,8 +452,8 @@ function FortuneCard({ fortune: f }: { fortune: Fortune }) {
         </Section>
 
         {f.remedy && (
-          <div className="mt-5 rounded-xl border-2 border-[#d9a85b] bg-[#fdf0d8] px-4 py-3 text-sm text-[#7c4a21]">
-            <span className="font-bold">🧧 化解建議：</span>
+          <div className="mt-5 rounded-xl bg-linear-to-r from-sky-50 to-pink-50 px-4 py-3 text-sm text-slate-700 ring-1 ring-pink-100">
+            <span className="font-bold text-pink-600">✦ 轉運小提醒：</span>
             {f.remedy}
           </div>
         )}
@@ -522,11 +464,10 @@ function FortuneCard({ fortune: f }: { fortune: Fortune }) {
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="mt-5">
-      <h3 className="font-serif-tc mb-2 flex items-center gap-2 text-sm font-black tracking-widest text-[#9b1c1c]">
-        <span className="h-0.5 w-4 rounded bg-[#d9a85b]" />
+    <section className="mt-6">
+      <h3 className="mb-2.5 flex items-center gap-2 text-sm font-bold tracking-widest text-[#2c3a6b]">
+        <span className="text-pink-400">✦</span>
         {title}
-        <span className="h-0.5 flex-1 rounded bg-[#ecd2a6]" />
       </h3>
       {children}
     </section>
@@ -535,9 +476,9 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 
 function Lucky({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div className="rounded-xl bg-[#fdf0d8] px-2 py-2.5 text-center ring-2 ring-[#ecd2a6]">
-      <div className="text-[11px] font-medium text-[#7c4a21]/80">{label}</div>
-      <div className="mt-0.5 text-sm font-bold text-[#4a230c]">{children}</div>
+    <div className="rounded-xl bg-white/60 px-2 py-2.5 text-center ring-1 ring-sky-100">
+      <div className="text-[11px] text-slate-500">{label}</div>
+      <div className="mt-0.5 text-sm font-bold text-slate-800">{children}</div>
     </div>
   );
 }
