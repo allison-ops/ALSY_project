@@ -2,25 +2,169 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #0f172a;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-geist-sans), "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.toast-in {
+  animation: toast-in 0.2s ease-out;
+}
+
+/* ---- 玻璃質感（番茄時鐘） ---- */
+.glass {
+  background: rgb(255 255 255 / 0.3);
+  border: 1px solid rgb(255 255 255 / 0.65);
+  box-shadow:
+    0 8px 32px rgb(148 163 184 / 0.18),
+    inset 0 1px 0 rgb(255 255 255 / 0.7);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+}
+
+.glass-soft {
+  background: rgb(255 255 255 / 0.45);
+  border: 1px solid rgb(255 255 255 / 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+@keyframes blob-float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(30px, -24px) scale(1.08);
+  }
+}
+
+.blob {
+  animation: blob-float 14s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blob {
+    animation: none;
+  }
+}
+
+/* ---- 好運抽籤 ---- */
+@keyframes fortune-shake {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  15% {
+    transform: rotate(-14deg) translateY(-4px);
+  }
+  30% {
+    transform: rotate(12deg);
+  }
+  45% {
+    transform: rotate(-10deg) translateY(-6px);
+  }
+  60% {
+    transform: rotate(10deg);
+  }
+  75% {
+    transform: rotate(-6deg) translateY(-2px);
+  }
+}
+
+@keyframes stick-rise {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-46px);
+  }
+}
+
+@keyframes fortune-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes seal-stamp {
+  0% {
+    opacity: 0;
+    transform: scale(1.8) rotate(-6deg);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(0.94) rotate(-6deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(-6deg);
+  }
+}
+
+.fortune-shake {
+  animation: fortune-shake 0.4s ease-in-out infinite;
+  transform-origin: 50% 90%;
+}
+
+.stick-rise {
+  animation: stick-rise 0.6s ease-out forwards;
+}
+
+.fortune-reveal {
+  animation: fortune-reveal 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.seal-stamp {
+  animation: seal-stamp 0.5s 0.35s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fortune-shake,
+  .stick-rise,
+  .fortune-reveal,
+  .seal-stamp {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+  }
+}
+
+.font-serif-tc {
+  font-family: var(--font-serif-tc), "Noto Serif TC", "PMingLiU", "MingLiU", serif;
+}
+
+/* ---- 個人任務的霧面面板（淺藍 × 淺粉） ---- */
+.glass-panel {
+  background: rgb(255 255 255 / 0.68);
+  border: 1px solid rgb(255 255 255 / 0.85);
+  box-shadow: 0 6px 24px rgb(125 211 252 / 0.14);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
 }
